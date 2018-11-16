@@ -1,0 +1,36 @@
+﻿@page
+@model MovieRecommendations.WebApp.Pages.MoviesModel
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<h2>Movies</h2>
+
+@if (Model.Movies == null)
+{
+<div class="alert alert-danger" role="alert">
+    Sorry, but something went when trying to fetch information about movies.
+</div>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Average rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Movies)
+        {
+        <tr>
+            <th scope="row">@user.Id</th>
+            <td>@user.Name</td>
+            <td>@user.AverageRating.ToString("0.00")</td>
+        </tr>
+        }
+    </tbody>
+</table>
+}

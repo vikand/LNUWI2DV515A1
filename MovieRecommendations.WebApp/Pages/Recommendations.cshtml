@@ -1,0 +1,97 @@
+﻿@page
+@model MovieRecommendations.WebApp.Pages.RecommendationsModel
+@{
+    ViewData["Title"] = "Ratings";
+}
+
+<h2>Recommendations</h2>
+
+@if (Model.Users == null)
+{
+    <div class="alert alert-danger" role="alert">
+        Sorry, but something went wrong when trying to fetch information about movies.
+    </div>
+}
+else if (!Model.Users.Any())
+{
+    <div class="alert alert-warning" role="alert">
+        Sorry, but there seems to be no users to select from.
+    </div>
+}
+else
+{
+    <form method="post">
+        <div class="form-group">
+            <label for="user">Select user to find recommendations for:</label>
+            <select asp-for="SelectedUser" asp-items="@(new SelectList(Model.Users, "Id", "Name"))" class="form-control"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Select algorithm to use:</label>
+            <div class="checkbox">
+                <label><input asp-for="UseEuclidean" type="checkbox">Euclidean distance</label>
+            </div>
+            <div class="checkbox">
+                <label><input asp-for="UsePearson" type="checkbox">Pearson correlation</label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <br/>
+}
+
+@if (Model.Recommendations != null)
+{
+    if (!Model.Recommendations.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            Sorry, no recommendations found.
+        </div>
+    }
+    else
+    {
+        <div class="panel-group">
+        @foreach (var algorithm in Model.Recommendations.Keys)
+        {
+            <div class="panel panel-primary">
+                <div class="panel-heading">Top 3 recommendations using the @algorithm algorithm</div>
+                <div class="panel-body">
+                    @if (Model.Recommendations[algorithm] == null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            Sorry, but something went wrong when trying to fetch information about movies.
+                        </div>
+                    }
+                    else if (!Model.Recommendations[algorithm].Any())
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            Sorry, but there seems to be no recommendations.
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Movie</th>
+                                <th>Score</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var recommendation in Model.Recommendations[algorithm].Take(3))
+                            {
+                                <tr>
+                                    <td>@recommendation.MovieName</td>
+                                    <td>@recommendation.Score.ToString("0.0000")</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        }
+        </div>
+    }
+}
