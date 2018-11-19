@@ -1,6 +1,6 @@
 ﻿namespace MovieRecommendations.Entities
 {
-    public enum UserSimilarityAlgorithm
+    public enum SimilarityAlgorithm
     {
         Euclidean,
         Pearson

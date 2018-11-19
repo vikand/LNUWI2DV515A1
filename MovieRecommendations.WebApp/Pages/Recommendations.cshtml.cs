@@ -20,7 +20,7 @@ namespace MovieRecommendations.WebApp.Pages
 
         public IEnumerable<User> Users { get; private set; }
 
-        public IDictionary<UserSimilarityAlgorithm, IEnumerable<Recommendation>> Recommendations { get; private set; }
+        public IDictionary<SimilarityAlgorithm, IEnumerable<Recommendation>> Recommendations { get; private set; }
 
         [BindProperty]
         public int SelectedUser { get; set; }
@@ -42,20 +42,20 @@ namespace MovieRecommendations.WebApp.Pages
 
             if (SelectedUser != 0)
             {
-                Recommendations = new Dictionary<UserSimilarityAlgorithm, IEnumerable<Recommendation>>();
+                Recommendations = new Dictionary<SimilarityAlgorithm, IEnumerable<Recommendation>>();
 
                 if (UseEuclidean)
                 {
                     Recommendations.Add(
-                        UserSimilarityAlgorithm.Euclidean, 
-                        GetRecommendations(SelectedUser, UserSimilarityAlgorithm.Euclidean));
+                        SimilarityAlgorithm.Euclidean, 
+                        GetRecommendations(SelectedUser, SimilarityAlgorithm.Euclidean));
                 }
 
                 if (UsePearson)
                 {
                     Recommendations.Add(
-                        UserSimilarityAlgorithm.Pearson,
-                        GetRecommendations(SelectedUser, UserSimilarityAlgorithm.Pearson));
+                        SimilarityAlgorithm.Pearson,
+                        GetRecommendations(SelectedUser, SimilarityAlgorithm.Pearson));
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace MovieRecommendations.WebApp.Pages
             Users = users;
         }
 
-        private IEnumerable<Recommendation> GetRecommendations(int userId, UserSimilarityAlgorithm algorithm)
+        private IEnumerable<Recommendation> GetRecommendations(int userId, SimilarityAlgorithm algorithm)
         {
             return client.Get<IEnumerable<Recommendation>>($"api/recommendations/{userId}/{algorithm}").Item1;
         }

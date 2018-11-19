@@ -31,7 +31,7 @@ namespace MovieRecommendationsWebApi.Controllers
         [HttpGet("{userId}/{algorithm}", Name = "Get")]
         public ActionResult<IEnumerable<Recommendation>> Get(int userId, string algorithm)
         {
-            var userSimilarityAlgorithm = Enum.Parse<UserSimilarityAlgorithm>(algorithm, true);
+            var userSimilarityAlgorithm = Enum.Parse<SimilarityAlgorithm>(algorithm, true);
 
             var users = this.userRepository.GetUsers();
             var movies = this.ratingRepository.GetMovies();

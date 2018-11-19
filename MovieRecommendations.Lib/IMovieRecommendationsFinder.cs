@@ -10,6 +10,6 @@ namespace MovieRecommendations.Lib
             IEnumerable<User> allUsers, 
             IEnumerable<Movie> allMovies, 
             IEnumerable<Rating> allRatings, 
-            UserSimilarityAlgorithm algorithm);
+            SimilarityAlgorithm algorithm);
     }
 }

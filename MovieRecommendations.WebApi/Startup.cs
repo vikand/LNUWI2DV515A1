@@ -29,7 +29,7 @@ namespace MovieRecommendations.WebApi
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRatingRepository, RatingRepository>();            
             services.AddScoped<IMovieRecommendationsFinder, MovieRecommendationsFinder>();
-            services.AddScoped<IUserRatingsSimilarityAlgorithmFactory, UserRatingsSimilarityAlgorithmFactory>();
+            services.AddScoped<ISimilarityAlgorithmFactory, SimilarityAlgorithmFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

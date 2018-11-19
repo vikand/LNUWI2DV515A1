@@ -7,9 +7,9 @@ namespace MovieRecommendations.Lib
 {
     public class MovieRecommendationsFinder : IMovieRecommendationsFinder
     {
-        private readonly IUserRatingsSimilarityAlgorithmFactory userRatingsSimilarityAlgorithmFactory;
+        private readonly ISimilarityAlgorithmFactory userRatingsSimilarityAlgorithmFactory;
 
-        public MovieRecommendationsFinder(IUserRatingsSimilarityAlgorithmFactory userRatingsSimilarityAlgorithmFactory)
+        public MovieRecommendationsFinder(ISimilarityAlgorithmFactory userRatingsSimilarityAlgorithmFactory)
         {
             this.userRatingsSimilarityAlgorithmFactory = userRatingsSimilarityAlgorithmFactory;
         }
@@ -19,12 +19,12 @@ namespace MovieRecommendations.Lib
             IEnumerable<User> allUsers, 
             IEnumerable<Movie> allMovies, 
             IEnumerable<Rating> allRatings,
-            UserSimilarityAlgorithm userSimilarityAlgorithm)
+            SimilarityAlgorithm userSimilarityAlgorithm)
         {
             //allUsers = allUsers.Where(u => u.Id != 3).ToList();
             //allRatings = allRatings.Where(r => r.UserId != 3).ToList();
 
-            IUserRatingsSimilarityAlgorithm userRatingsSimilarityAlgorithm =
+            var userRatingsSimilarityAlgorithm =
                 this.userRatingsSimilarityAlgorithmFactory.Create(userSimilarityAlgorithm);
 
             var userToFindRecommendationsForRatings = 
@@ -36,14 +36,19 @@ namespace MovieRecommendations.Lib
             var unseenMovies = 
                 allMovies.Where(m => !userToFindRecommendationsForRatings.Any(r => r.MovieId == m.Id));
 
+            var userToFindRecommendationsForValues =
+                userToFindRecommendationsForRatings.ToDictionary(r => r.MovieId, r => (double)r.UserRating);
+
             var userSimilarities = allOtherUsers
                 .Select(u => new
                 {
                     UserId = u.Id,
                     Similarity = userRatingsSimilarityAlgorithm.CalculateSimilarity(
-                        userToFindRecommendationsForRatings,
-                        allOtherUsersRatings.Where(r => r.UserId == u.Id))
+                        userToFindRecommendationsForValues,
+                        allOtherUsersRatings.Where(r => r.UserId == u.Id)
+                            .ToDictionary(r => r.MovieId, r => (double)r.UserRating))
                 });
+
 
             var movieSimilaritiesAndWeightedRatings = unseenMovies
                 .Join(allOtherUsersRatings, m => m.Id, r => r.MovieId, (m, r) => new { m, r })
